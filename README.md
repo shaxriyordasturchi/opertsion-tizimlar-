@@ -1,0 +1,1 @@
+# opertsion-tizimlar-
