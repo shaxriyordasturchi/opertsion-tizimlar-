@@ -1,7 +1,7 @@
 streamlit
-face_recognition
-opencv-python
-numpy
-pillow
-python-telegram-bot
 pytz
+python-telegram-bot==13.15
+opencv-python
+face_recognition
+Pillow
+sqlite3  # bu Python built-in, lekin ba'zida yoziladi
