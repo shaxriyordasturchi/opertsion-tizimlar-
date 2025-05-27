@@ -4,9 +4,3 @@ python-telegram-bot==13.15
 opencv-python
 face_recognition
 Pillow
-sqlite3  # bu Python built-in, lekin ba'zida yoziladi
-python-3.11.8
-git add .python-version
-git commit -m "fix: set python version to 3.11"
-git push
-
