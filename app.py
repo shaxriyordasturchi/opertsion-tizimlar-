@@ -7,19 +7,27 @@ import os
 import pickle
 from datetime import datetime
 from telegram import Bot
+from telegram.error import TelegramError
 import pytz
 from dotenv import load_dotenv
 
-# Konfiguratsiyani .env faylidan yuklash
+# Konfiguratsiyani yuklash
 load_dotenv()
 
-TELEGRAM_BOT_TOKEN = os.getenv("7899690264:AAH14dhEGOlvRoc4CageMH6WYROMEE5NmkY")
-ADMIN_CHAT_ID = os.getenv(" 7750409176")
+# Telegram sozlamalari
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or "your_telegram_bot_token"
+ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID") or "your_chat_id"
 
-bot = Bot(token=TELEGRAM_BOT_TOKEN)
+try:
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
+except Exception as e:
+    st.error(f"Telegram botini ishga tushirishda xato: {e}")
+    bot = None
+
 
 DB_PATH = "worktime.db"
 ENCODING_DIR = "encodings"
+os.makedirs(ENCODING_DIR, exist_ok=True)
 
 # Bazani ishga tushirish
 def init_db():
