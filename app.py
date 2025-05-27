@@ -8,14 +8,51 @@ import pickle
 from datetime import datetime
 from telegram import Bot
 import pytz
+from dotenv import load_dotenv
 
-TELEGRAM_BOT_TOKEN = "7899690264:AAH14dhEGOlvRoc4CageMH6WYROMEE5NmkY"
-ADMIN_CHAT_ID = "7750409176"  # o'zingizniki
+# Konfiguratsiyani .env faylidan yuklash
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv("7899690264:AAH14dhEGOlvRoc4CageMH6WYROMEE5NmkY")
+ADMIN_CHAT_ID = os.getenv(" 7750409176")
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
 DB_PATH = "worktime.db"
 ENCODING_DIR = "encodings"
+
+# Bazani ishga tushirish
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # Xodimlar jadvali
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS employees (
+            username TEXT PRIMARY KEY,
+            firstname TEXT NOT NULL,
+            lastname TEXT NOT NULL,
+            chat_id TEXT
+        )
+    ''')
+    
+    # Ish vaqti jadvali
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS attendance (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            firstname TEXT NOT NULL,
+            lastname TEXT NOT NULL,
+            login_time TEXT NOT NULL,
+            logout_time TEXT,
+            FOREIGN KEY (username) REFERENCES employees (username)
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+init_db()
 
 def get_current_time():
     tz = pytz.timezone("Asia/Tashkent")
@@ -24,6 +61,11 @@ def get_current_time():
 def load_encodings():
     known_encodings = []
     known_users = []
+    
+    if not os.path.exists(ENCODING_DIR):
+        os.makedirs(ENCODING_DIR)
+        return known_encodings, known_users
+    
     for file in os.listdir(ENCODING_DIR):
         if file.endswith(".pkl"):
             with open(f"{ENCODING_DIR}/{file}", "rb") as f:
@@ -36,6 +78,7 @@ def mark_attendance(user, mode="login"):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     now = get_current_time()
+    
     if mode == "login":
         c.execute("INSERT INTO attendance (username, firstname, lastname, login_time) VALUES (?, ?, ?, ?)",
                   (user['username'], user['firstname'], user['lastname'], now))
@@ -51,16 +94,10 @@ def mark_attendance(user, mode="login"):
     conn.commit()
     conn.close()
 
-    # Telegramga xabar
-    send_telegram_message(get_chat_id(user['username']), msg)
-
-def get_chat_id(username):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT chat_id FROM employees WHERE username = ?", (username,))
-    row = c.fetchone()
-    conn.close()
-    return row[0] if row else ADMIN_CHAT_ID
+    # Telegramga xabar yuborish
+    send_telegram_message(ADMIN_CHAT_ID, msg)
+    if 'chat_id' in user and user['chat_id']:
+        send_telegram_message(user['chat_id'], msg)
 
 def send_telegram_message(chat_id, message):
     try:
@@ -104,14 +141,13 @@ def recognize_face(mode):
     return result
 
 # ==== Streamlit UI ====
-
 st.set_page_config("Yuz bilan Kirish/Chiqish", layout="centered")
 st.title("🧑‍💼 Xodim Yuz Tanish Paneli")
 
 option = st.selectbox("Amalni tanlang:", ["Ishga Kirish", "Ishdan Chiqish"])
 
 if st.button("Yuzni Skanirovka Qilish"):
-    st.info("⏳ Kamera ishga tushdi. Yuzingizni ko‘rsating...")
+    st.info("⏳ Kamera ishga tushdi. Yuzingizni ko'rsating...")
     if option == "Ishga Kirish":
         result = recognize_face("login")
     else:
