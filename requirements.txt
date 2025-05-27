@@ -5,3 +5,4 @@ opencv-python
 face_recognition
 Pillow
 sqlite3  # bu Python built-in, lekin ba'zida yoziladi
+python==3.11.8
