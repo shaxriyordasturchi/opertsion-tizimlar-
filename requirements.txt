@@ -1,6 +1,10 @@
-streamlit
+sterlimet
+face-recognition
+opencv-python
+numpy
+pandas
+python-telegram-bot
+geopy
+flask
+reportlab
 pytz
-python-telegram-bot==13.15
-opencv-python===3.10.11.12
-face_recognition
-Pillow
