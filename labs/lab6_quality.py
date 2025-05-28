@@ -45,5 +45,3 @@ def run():
 
     st.write(f"Signal-to-Noise Ratio (SNR): {snr_db} dB")
     st.write(f"Ber Error Rate (BER): {ber:.6f}")
-
-    fig
