@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Laboratoriyalarni import qilamiz
-from labs import lab1_wdm, lab2_ocdma, lab3_pon, lab4_hybrid, lab5_time_series, lab6_quality, lab7_load_balancing, lab8_visualization, lab9_real_data, lab10_ml_forecast
+from labs import lab1_wdm, lab2_ocdma, lab3_pon, lab4_hybrid,  lab5_forecast, lab6_quality, lab7_load_balancing, lab8_visualization, lab9_real_data, lab10_ml_forecast
 
 st.title("WDM/OCDMA PON Trafik Prognozlash Laboratoriyalari")
 
