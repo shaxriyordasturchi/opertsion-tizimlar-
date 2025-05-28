@@ -27,7 +27,7 @@ elif lab_choice == "Lab 3: PON tizimi trafik tahlili":
 elif lab_choice == "Lab 4: WDM/OCDMA hibrid arxitekturasi":
     lab4_hybrid.run()
 elif lab_choice == "Lab 5: Trafikning vaqt bo‘yicha prognozi":
-    lab5_time_series.run()
+     lab5_forecast.run()
 elif lab_choice == "Lab 6: Kanalning sifat ko‘rsatkichlari":
     lab6_quality.run()
 elif lab_choice == "Lab 7: Trafik yuklama balanslash":
