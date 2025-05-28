@@ -12,7 +12,7 @@ def run():
     traffic_level = st.number_input("Trafik asosiy darajasi", 0.0, 10.0, 3.0, 0.1)
 
     # Simulyatsiya qilingan vaqt seriyasi
-    time_index = pd.date_range(start='2023-01-01', periods=periods, freq='D')
+    time_index = pd.date_range(start='2025-05-28', start='2025-06-10', periods=periods, freq='D')
     traffic_data = traffic_level + np.random.normal(0, 1, periods)
 
     df = pd.DataFrame({'Traffic': traffic_data}, index=time_index)
