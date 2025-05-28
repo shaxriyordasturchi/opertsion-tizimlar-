@@ -8,29 +8,37 @@ def run():
     st.header("Lab 5: Trafikning vaqt bo‘yicha prognozi")
 
     np.random.seed(42)
-    periods = st.slider("Davrlar soni", 10, 100, 50)
+    periods = st.slider("Davrlar soni (kunlarda)", 10, 100, 50)
     traffic_level = st.number_input("Trafik asosiy darajasi", 0.0, 10.0, 3.0, 0.1)
 
-    # Simulyatsiya qilingan vaqt seriyasi
-    time_index = pd.date_range(start='2025-05-28', start='2025-06-10', periods=periods, freq='D')
-    traffic_data = traffic_level + np.random.normal(0, 1, periods)
+    # Hozirgi kundan boshlab vaqt oralig'i
+    start_date = pd.Timestamp.today().normalize()
+    time_index = pd.date_range(start=start_date, periods=periods, freq='D')
 
+    # Trafik ma’lumotlarini generatsiya qilish
+    traffic_data = traffic_level + np.random.normal(0, 1, periods)
     df = pd.DataFrame({'Traffic': traffic_data}, index=time_index)
 
+    # Asosiy grafik
     st.line_chart(df)
 
-    # ARIMA modeli yordamida prognoz
-    model = ARIMA(df['Traffic'], order=(1,0,0))
+    # ARIMA modeli va prognoz
+    model = ARIMA(df['Traffic'], order=(1, 0, 0))
     model_fit = model.fit()
 
     forecast = model_fit.forecast(steps=5)
     st.write("Keyingi 5 kun uchun trafik prognozi:")
     st.write(forecast)
 
-    # Prognozni chizish
-    plt.figure(figsize=(10,4))
+    # Prognoz grafikasi
+    forecast_index = pd.date_range(start=df.index[-1] + pd.Timedelta(days=1), periods=5, freq='D')
+
+    plt.figure(figsize=(10, 4))
     plt.plot(df.index, df['Traffic'], label='Asosiy ma\'lumot')
-    plt.plot(pd.date_range(df.index[-1], periods=6, freq='D')[1:], forecast, label='Prognoz', linestyle='--')
+    plt.plot(forecast_index, forecast, label='Prognoz', linestyle='--', marker='o')
+    plt.xlabel("Sana")
+    plt.ylabel("Trafik")
+    plt.title("Trafik prognozi (ARIMA)")
     plt.legend()
     st.pyplot(plt)
     plt.clf()
